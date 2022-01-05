@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:task/General/Constants/DefaultAppBar.dart';
@@ -26,7 +27,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: DefaultAppBar(title: 'مدفوعات هلا',leading: SizedBox()),
+      appBar: DefaultAppBar(title: 'مدفوعات هلا', leading: SizedBox()),
       body: Consumer<PaymentProvider>(
           builder: (_, payment, child) => Column(
                 children: [
@@ -90,101 +91,130 @@ class _HomeState extends State<Home> {
                               size: 20,
                             ),
                           )
-                        : ListView.builder(
-                            itemCount: payment.payment.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 15),
-                                decoration: BoxDecoration(
-                                    boxShadow: kBoxShadow2,
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: ExpansionPanelList(
-                                  children: [
-                                    ExpansionPanel(
-                                        isExpanded:
-                                            payment.payment[index].isOpened,
-                                        canTapOnHeader: true,
-                                        headerBuilder: (context, isExpanded) =>
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 15),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      MyText(
-                                                        title: payment
-                                                            .payment[index]
-                                                            .fullNameAR,
-                                                        color: MyColors.primary,
+                        : AnimationLimiter(
+                            child: ListView.builder(
+                              itemCount: payment.payment.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return AnimationConfiguration.staggeredList(
+                                  position: index,
+                                  duration: const Duration(milliseconds: 700),
+                                  child: SlideAnimation(
+                                    verticalOffset: 50.0,
+                                    child: FadeInAnimation(
+                                      child: Container(
+                                        clipBehavior:
+                                            Clip.antiAliasWithSaveLayer,
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 15),
+                                        decoration: BoxDecoration(
+                                            boxShadow: kBoxShadow2,
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: ExpansionPanelList(
+                                          children: [
+                                            ExpansionPanel(
+                                                isExpanded: payment
+                                                    .payment[index].isOpened,
+                                                canTapOnHeader: true,
+                                                headerBuilder: (context,
+                                                        isExpanded) =>
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 15),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              MyText(
+                                                                title: payment
+                                                                    .payment[
+                                                                        index]
+                                                                    .fullNameAR,
+                                                                color: MyColors
+                                                                    .primary,
+                                                              ),
+                                                              MyText(
+                                                                title: payment
+                                                                    .payment[
+                                                                        index]
+                                                                    .mobileNumber,
+                                                              )
+                                                            ],
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              MyText(
+                                                                title:
+                                                                    '${payment.payment[index].amount}',
+                                                                color: MyColors
+                                                                    .red,
+                                                              ),
+                                                              MyText(
+                                                                title:
+                                                                    'ريال سعودي',
+                                                                color: MyColors
+                                                                    .grey,
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ],
                                                       ),
-                                                      MyText(
-                                                        title: payment
-                                                            .payment[index]
-                                                            .mobileNumber,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
+                                                    ),
+                                                body: Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 15),
+                                                  color: MyColors.bg,
+                                                  child: Column(
                                                     children: [
-                                                      MyText(
+                                                      BodyRow(
+                                                        title: 'رقم التحويل : ',
+                                                        value: payment
+                                                            .payment[index]
+                                                            .trxRef!,
+                                                      ),
+                                                      BodyRow(
                                                         title:
-                                                            '${payment.payment[index].amount}',
-                                                        color: MyColors.red,
+                                                            'تاريخ التحويل : ',
+                                                        value: payment
+                                                            .payment[index]
+                                                            .trxDate!,
                                                       ),
-                                                      MyText(
-                                                        title: 'ريال سعودي',
-                                                        color: MyColors.grey,
-                                                      )
+                                                      BodyRow(
+                                                        title: 'اسم المنشأة : ',
+                                                        value: payment
+                                                            .payment[index]
+                                                            .corporateFullNameAR!,
+                                                      ),
                                                     ],
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                        body: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          color: MyColors.bg,
-                                          child: Column(
-                                            children: [
-                                              BodyRow(
-                                                title: 'رقم التحويل : ',
-                                                value: payment
-                                                    .payment[index].trxRef!,
-                                              ),
-                                              BodyRow(
-                                                title: 'تاريخ التحويل : ',
-                                                value: payment
-                                                    .payment[index].trxDate!,
-                                              ),
-                                              BodyRow(
-                                                title: 'اسم المنشأة : ',
-                                                value: payment.payment[index]
-                                                    .corporateFullNameAR!,
-                                              ),
-                                            ],
-                                          ),
-                                        ))
-                                  ],
-                                  expansionCallback: (index, isExpanded) {
-                                    payment.payment[index].isOpened =
-                                        !payment.payment[index].isOpened;
-                                    setState(() {});
-                                  },
-                                ),
-                              );
-                            },
+                                                ))
+                                          ],
+                                          expansionCallback:
+                                              (index, isExpanded) {
+                                            payment.payment[index].isOpened =
+                                                !payment
+                                                    .payment[index].isOpened;
+                                            setState(() {});
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                   ),
                 ],
